@@ -1,8 +1,8 @@
 import React from 'react';
 import Header from '../layouts/header'
 import { StyleSheet, ScrollView, Text, View} from 'react-native';
-import { Image, Rating } from 'react-native-elements';
-import Movie from '../libraries/movies';
+import { Image } from 'react-native-elements';
+import Movie from 'react-native-movie';
 import data from '../../assets/data';
 
 export default function Home() {
