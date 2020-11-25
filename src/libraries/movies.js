@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
-import {StyleSheet, ScrollView, View, Modal, TouchableWithoutFeedback} from 'react-native';
+import {StyleSheet, ScrollView, View, Modal, TouchableOpacity, TouchableWithoutFeedback} from 'react-native';
 import {Image, Rating, Text, Card} from 'react-native-elements';
 
 const Movie = (props) => {
   const [isModalVisible, setModalVisible] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState({});
 
   const calcMargin = (i, len) => {
     if (i === 0) {
@@ -14,7 +15,11 @@ const Movie = (props) => {
     return { marginHorizontal: 10 }
   };
 
-  const toggleModal = () => {
+  const toggleModal = (event, item) => {
+    setSelectedMovie({})
+    if (item) {
+      setSelectedMovie(item)
+    }
     setModalVisible(!isModalVisible)
   };
 
@@ -33,9 +38,9 @@ const Movie = (props) => {
 
                 return (
                   <View key={i} style={[styles.movieWrapper, calcMargin(i, data.length)]}>
-                    <TouchableWithoutFeedback onPress={toggleModal}>
+                    <TouchableOpacity onPress={(e) => toggleModal(e, item)}>
                       <Image style={styles.movieImage} source={{ uri: image }} />
-                    </TouchableWithoutFeedback>
+                    </TouchableOpacity>
                     <Text style={styles.movieCategory}>{ category }</Text>
                     <Rating
                       readonly
@@ -45,7 +50,7 @@ const Movie = (props) => {
                       ratingBackgroundColor="#EDE0A8"
                       imageSize={24}
                       startingValue={ rating } />
-                    <TouchableWithoutFeedback onPress={toggleModal}>
+                    <TouchableWithoutFeedback onPress={(e) => toggleModal(e, item)}>
                       <Text style={styles.movieTitle}>{ title }</Text>
                     </TouchableWithoutFeedback>
                   </View>
@@ -61,28 +66,41 @@ const Movie = (props) => {
   };
 
   const renderModal = () => {
+    const image = selectedMovie.image && selectedMovie.image.uri ? selectedMovie.image.uri : '';
+    const category = selectedMovie.category || '- No category -';
+    const title = selectedMovie.title || '- No title -';
+    const rating = selectedMovie.rating || 0;
+    const description = selectedMovie.description || '- No description -';
+
     return (
-      <TouchableWithoutFeedback onPress={toggleModal}>
         <Modal
           animationType="fade"
           transparent={true}
           presentationStyle="overFullScreen"
           visible={isModalVisible}
         >
-          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.9)'}}>
-            <TouchableWithoutFeedback onPress={() => {}}>
-              <Card>
-                <Card.Title>HELLO WORLD</Card.Title>
-                <Card.Divider/>
-                <Card.Image source={{uri: 'https://i.imgur.com/tAui2H7.jpg'}} />
-                <Text style={{marginBottom: 10}}>
-                  The idea with React Native Elements is more about component structure than actual design.
-                </Text>
-              </Card>
-            </TouchableWithoutFeedback>
-          </View>
+          <TouchableWithoutFeedback onPress={(e) => toggleModal(e,null)}>
+            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.9)'}}>
+              <TouchableWithoutFeedback onPress={() => {}}>
+                <Card>
+                  <Card.Title>{title}</Card.Title>
+                  <Card.Divider/>
+                  <Card.Image source={{uri: image}} />
+                  <Text style={styles.movieCategory}>{category}</Text>
+                  <Text style={{marginBottom: 10}}>{description}</Text>
+                  <Rating
+                    readonly
+                    fractions={1}
+                    type='custom'
+                    tintColor="#fff"
+                    ratingBackgroundColor="#EDE0A8"
+                    imageSize={24}
+                    startingValue={ rating } />
+                </Card>
+              </TouchableWithoutFeedback>
+            </View>
+          </TouchableWithoutFeedback>
         </Modal>
-      </TouchableWithoutFeedback>
     )
   }
 
